@@ -43,7 +43,7 @@ function Signup() {
                   </div>
                   <div class="mb-3">
                     <label for="usuario" class="form-label">Correo Electrónico</label>
-                    <input type="text" class="form-control" id="autoSizingInputGroup" placeholder="Ingrese su correo electrónico institucional"
+                    <input type="email" class="form-control" id="autoSizingInputGroup" placeholder="Ingrese su correo electrónico institucional"
                     name="email" onChange={handleInput} />
                     {errors.email && <span className='text-danger'>{errors.email}</span>}
                   </div>
@@ -55,7 +55,7 @@ function Signup() {
                   </div>
                   <div class="mb-3">
                     <label for="usuario" class="form-label">Contraseña</label>
-                    <input type="text" class="form-control" id="autoSizingInputGroup" placeholder="Ingrese una contraseña segura"
+                    <input type="password" class="form-control" id="autoSizingInputGroup" placeholder="Ingrese una contraseña segura"
                     name="password" onChange={handleInput} />
                     {errors.password && <span className='text-danger'>{errors.password}</span>}
                   </div>

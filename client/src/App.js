@@ -1,8 +1,8 @@
 import './App.css';
-import Login from './Login'
+import Login from './Pagina Inicial/Login'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
-import Signup from './Signup'
-import ResetPass from './ResetPass';
+import Signup from './Pagina Inicial/Signup'
+import ResetPass from './Pagina Inicial/ResetPass';
 
 function App() {
   return (
