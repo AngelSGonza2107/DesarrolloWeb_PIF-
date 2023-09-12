@@ -1,0 +1,26 @@
+button {
+  display: block;
+  padding: 0.5rem 1rem;
+  width: 200px;
+  margin: 0 auto;
+}
+
+.mb-3 {
+  text-align: center;
+}
+
+.card-header {
+  text-align: center;
+}
+
+.button1 {
+  text-align: center;
+}
+
+.button2 {
+  text-align: right;
+}
+
+.image {
+  text-align: center;
+}
