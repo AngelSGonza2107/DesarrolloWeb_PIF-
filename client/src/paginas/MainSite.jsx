@@ -3,6 +3,9 @@ import Publicacion from "../componentes/Publicacion";
 import DefaultLayout from "../layouts/DefaultLayout";
 
 export default function MainSite(props) {
+  // Esta variable está en varias páginas y componentes
+  // Cambiale el valor de true a false o viceversa y mira los cambios que ocurren en la página
+  // Esta variable simula el estado si hay una sesión iniciada
   const [sesionIniciada, setSesionIniciada] = useState(false);
   const publicaciones = [ // estas publicaciones obviamente son falsas, intercambiarlas por las obtenidas de la base de datos
     {

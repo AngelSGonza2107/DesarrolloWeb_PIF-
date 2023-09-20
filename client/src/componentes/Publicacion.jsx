@@ -3,6 +3,9 @@ import Comentario from "./Comentario";
 import { Link } from "react-router-dom";
 
 export default function Publicacion(props) {
+  // Esta variable está en varias páginas y componentes
+  // Cambiale el valor de true a false o viceversa y mira los cambios que ocurren en la página
+  // Esta variable simula el estado si hay una sesión iniciada
   const [sesionIniciada, setSesionIniciada] = useState(false);
 
   return (

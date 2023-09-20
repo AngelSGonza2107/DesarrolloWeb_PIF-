@@ -4,6 +4,10 @@ import { useParams } from "react-router-dom";
 
 export default function Usuario() {
   const { registro } = useParams();
+
+  // Esta variable está en varias páginas y componentes
+  // Cambiale el valor de true a false o viceversa y mira los cambios que ocurren en la página
+  // Esta variable simula el estado si hay una sesión iniciada
   const [sesionIniciada, setSesionIniciada] = useState(true);
   const [isEditNombreCompleto, setIsEditNombreCompleto] = useState(false);
   const [isEditEmail, setIsEditEmail] = useState(false);
