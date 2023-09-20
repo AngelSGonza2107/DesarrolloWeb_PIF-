@@ -1,10 +1,11 @@
-export default function Comentario() {
+import { Link } from "react-router-dom";
+
+export default function Comentario(props) {
   return (
     <div className="p-2 border bg-white rounded" style={{}}>
-      <span>por <b>Usuario123:</b></span>
+      <b>por <Link to={`/usuario/${props.autorRegistro}`}>{props.autorEmail}:</Link></b>
       <p>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus
-        deleniti ipsam modi ex vero dolor!
+        {props.contenido}
       </p>
     </div>
   );
