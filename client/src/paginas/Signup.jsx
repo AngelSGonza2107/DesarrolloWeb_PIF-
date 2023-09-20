@@ -24,7 +24,7 @@ function Signup() {
 
   return (
     <DefaultLayout>
-      <div className="Signup">
+      <div className="auth-container">
         <div class="container mt-5">
           <div class="row justify-content-center">
             <div class="col-md-6">

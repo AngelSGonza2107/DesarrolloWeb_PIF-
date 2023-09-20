@@ -1,74 +1,132 @@
+import Publicacion from "../componentes/Publicacion";
 import DefaultLayout from "../layouts/DefaultLayout";
 
 export default function MainSite(props) {
   return (
     <DefaultLayout>
       <div className="row">
-        <div className="col-8">
-          <h3>Bienvenido #nombre_usuario#</h3>
+        <div className="col-sm-9 col-md-9 col-xl-6 mx-auto">
           <div>
-            Buscar Usuario por Registro: <input type="text" />
-            <button>Ir a su perfil</button>
+            <h3>Bienvenido #nombre_usuario#</h3>
+            <div className="d-flex gap-3" style={{ maxWidth: "600px" }}>
+              <p style={{ transform: "translateY(5px)" }}>
+                Buscar Usuario por Registro:
+              </p>
+              <input
+                className="form-control flex-grow-1"
+                style={{ width: "unset" }}
+                type="text"
+              />
+              <button className="btn btn-primary">Ir a su perfil</button>
+            </div>
           </div>
-          <h2>Publicaciones</h2>
+
+          <hr className="my-4" />
 
           <h3>Crear mi publicación:</h3>
           <div className="card">
             <div className="card-body">
               <div>
                 <div>
-                  <b>Tipo de publicación</b>
-                  <select>
+                  <b>Tipo de publicación: </b>
+                  <select
+                    className="p-1 border rounded"
+                    style={{ width: "150px" }}
+                  >
                     <option value="">Curso</option>
                     <option value="">Catedrático</option>
                   </select>
                 </div>
-                <div>
-                  <b>Curso:</b>
-                  <select>
+                <div className="mt-3">
+                  <b>Curso: </b>
+                  <select
+                    className="p-1 border rounded"
+                    style={{ width: "200px" }}
+                  >
                     <option value="">#curso1#</option>
                     <option value="">#curso2#</option>
                   </select>
                 </div>
               </div>
-              <div>
+              <div className="mt-3">
                 <b>Contenido:</b>
-                <textarea className="form-control" rows="10"></textarea>
+                <textarea className="form-control mt-2" rows="5"></textarea>
               </div>
-              <div>
-                <button className="btn btn-primary">Publicar</button>
+              <div className="d-flex justify-content-center">
+                <button className="btn mt-3 px-5 py-2 btn-primary">
+                  Publicar
+                </button>
               </div>
             </div>
           </div>
 
-          <label htmlFor="nombre-curso">Buscar por nombre de curso</label>
-          <input id="nombre-curso" className="form-control" type="text" />
-          <label htmlFor="nombre-catedratico">
-            Buscar por nombre de catedrático
-          </label>
-          <input type="text" className="form-control" id="nombre-catedratico" />
+          <hr className="my-4" />
 
-          <div className="card">
-            <div className="card-header">
-              tipo: <b>Curso</b>
+          <h3>Todas las publicaciones</h3>
+          <div>
+            <label htmlFor="nombre-curso">
+              Buscar por nombre de curso o catedrático:
+            </label>
+            <input
+              id="nombre-curso"
+              className="form-control mt-2"
+              type="text"
+              style={{width: "300px"}}
+            />
+          </div>
+          <h5 className="my-4">Ordenar por:</h5>
+          <div className="row">
+            <div className="col">
+              <input
+                type="radio"
+                id="ninguno"
+                name="ordenar-por-curso-o-catedratico"
+                checked
+              />
+              <label htmlFor="ninguno">Ninguno</label>
             </div>
-            <div className="card-body">
-              <span>
-                por: <b>UserName</b>
-              </span>
-              <span class="badge bg-secondary fs-6">
-                curso: <b>Matemática</b>
-              </span>
-              <div className="text-body-secondary fst-italic">
-                Fecha: 29/09/2019
+            <div className="col">
+              <b>Por curso:</b>
+              <div>
+                <input
+                  type="radio"
+                  id="curso-asc"
+                  name="ordenar-por-curso-o-catedratico"
+                />
+                <label htmlFor="curso-asc">Ascendente</label>
               </div>
               <div>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Repellat voluptatibus eius distinctio tenetur reiciendis optio
-                officia facilis dolore maxime, nemo tempora eum similique?
-                Exercitationem nam et sint temporibus distinctio doloremque.
+                <input
+                  type="radio"
+                  id="curso-des"
+                  name="ordenar-por-curso-o-catedratico"
+                />
+                <label htmlFor="curso-des">Descendente</label>
               </div>
             </div>
+            <div className="col">
+              <b>Por catedrático:</b>
+              <div>
+                <input
+                  type="radio"
+                  id="catedratico-asc"
+                  name="ordenar-por-curso-o-catedratico"
+                />
+                <label htmlFor="catedratico-asc">Ascendente</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  id="catedratico-des"
+                  name="ordenar-por-curso-o-catedratico"
+                />
+                <label htmlFor="catedratico-des">Descendente</label>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <Publicacion />
           </div>
         </div>
       </div>

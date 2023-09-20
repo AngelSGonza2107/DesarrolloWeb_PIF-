@@ -4,31 +4,40 @@ export default function Usuario() {
   return (
     <DefaultLayout>
       <div className="col-8">
-        <h1>Mi Perfil/#correo#</h1>
+        <h1>Mi Perfil | #correo#</h1>
 
         <div>
-          <div>
+          <div className="d-flex flex-column">
             <b>Nombre completo:</b>
-            <p>#nombreCompleto#</p>
-            <button className="btn btn-primary">Editar</button>
+            <div className="d-flex gap-3 mt-2 align-items-center">
+              <p style={{transform: "translateY(5px)"}}>#nombreCompleto#</p>
+              <button className="btn btn-primary">Editar</button>
+            </div>
           </div>
-          <div>
+          <div className="d-flex flex-column mt-3">
             <b>Correo electrónico:</b>
-            <p>#correoElectronico#</p>
-            <button className="btn btn-primary">Editar</button>
+            <div className="d-flex gap-3 mt-2 align-items-center">
+              <p style={{transform: "translateY(5px)"}}>#correoElectronico#</p>
+              <button className="btn btn-primary">Editar</button>
+            </div>
           </div>
-          <div>
+          <div className="d-flex flex-column mt-3">
             <b>Registro Académico:</b>
-            <p>#nombreCompleto#</p>
-            <button className="btn btn-primary">Editar</button>
+            <div className="d-flex gap-3 mt-2 align-items-center">
+              <p style={{transform: "translateY(5px)"}}>#nombreCompleto#</p>
+              <button className="btn btn-primary">Editar</button>
+            </div>
           </div>
-          <div>
+          <div className="d-flex flex-column mt-3">
             <b>Contraseña:</b>
-            <p>#contrasena#</p>
-            <button className="btn btn-primary">Editar</button>
+            <div className="d-flex gap-3 mt-2 align-items-center">
+              <p style={{transform: "translateY(5px)"}}>#contrasena#</p>
+              <button className="btn btn-primary">Editar</button>
+            </div>
           </div>
         </div>
 
+        <h2 className="mt-5">Cursos</h2>
         <div>
           <ul class="nav nav-tabs">
             <li class="nav-item">

@@ -22,16 +22,16 @@ export default function Navbar(props) {
         </div>
         <div className="collapse flex-grow-0 navbar-collapse" id="navbarNavAltMarkup">
           <div className="navbar-nav">
-            <NavLink exact to="/" activeClassname="active" className="nav-link">
+            <NavLink to="/" className="nav-link">
               Inicio
             </NavLink>
-            <NavLink to="/login" activeClassname="active" className="nav-link">
+            <NavLink to="/login" className="nav-link">
               Iniciar Sesión
             </NavLink>
-            <NavLink to="/signup" activeClassname="active" className="nav-link">
+            <NavLink to="/signup" className="nav-link">
               Registrarse
             </NavLink>
-            <NavLink to="/usuario/mi-perfil" activeClassname="active" className="nav-link">
+            <NavLink to="/usuario/mi-perfil" className="nav-link">
               Mi Perfil
             </NavLink>
           </div>

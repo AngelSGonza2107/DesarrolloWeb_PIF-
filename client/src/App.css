@@ -1,0 +1,26 @@
+.auth-container button {
+  display: block;
+  padding: 0.5rem 1rem;
+  width: 200px;
+  margin: 0 auto;
+}
+
+.auth-container .mb-3 {
+  text-align: center;
+}
+
+.auth-container .card-header {
+  text-align: center;
+}
+
+.auth-container .button1 {
+  text-align: center;
+}
+
+.auth-container .button2 {
+  text-align: right;
+}
+
+.auth-container .image {
+  text-align: center;
+}

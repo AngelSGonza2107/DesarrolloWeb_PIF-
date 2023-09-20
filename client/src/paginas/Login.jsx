@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../assets/Login.css";
 import { Link } from "react-router-dom";
 import Validation from "../controladores/LoginValidation";
 import DefaultLayout from "../layouts/DefaultLayout";
@@ -23,7 +22,7 @@ function Login() {
 
   return (
     <DefaultLayout>
-      <div className="Login">
+      <div className="auth-container">
         <div class="container mt-5">
           <div class="row justify-content-center">
             <div class="col-md-6">
@@ -45,7 +44,7 @@ function Login() {
                   <br />
                   <form action="" onSubmit={handleSubmit}>
                     <div class="mb-3">
-                      <label for="usuario" class="form-label">
+                      <label htmlFor="usuario" class="form-label">
                         Usuario
                       </label>
                       <input
@@ -61,7 +60,7 @@ function Login() {
                       )}
                     </div>
                     <div class="mb-3">
-                      <label for="contraseña" class="form-label">
+                      <label htmlFor="contraseña" class="form-label">
                         Contraseña
                       </label>
                       <input

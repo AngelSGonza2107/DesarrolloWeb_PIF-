@@ -4,7 +4,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import Signup from './paginas/Signup'
 import ResetPass from './paginas/ResetPass';
 import MainSite from './paginas/MainSite';
-import Usuario from './componentes/Usuario';
+import Usuario from './paginas/Usuario';
 
 function App() {
   return (
