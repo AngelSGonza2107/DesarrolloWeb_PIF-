@@ -60,6 +60,26 @@ app.post("/crearPublicacion", (req, res) => {
   });
 });
 
+app.post("/agregarComentario", (req, res) => {
+  // Obtén los datos del formulario desde la solicitud
+  const { publicacionId, contenido, autorEmail } = req.body;
+
+  // Obtén la fecha actual en el formato correcto (YYYY-MM-DD)
+  const fechaActual = new Date().toISOString().slice(0, 10);
+
+  // Inserta los datos en la tabla COMENTARIO
+  const query = "INSERT INTO COMENTARIO (publicacionId, autorEmail, fecha, contenido) VALUES (?, ?, ?, ?)";
+  db.query(query, [publicacionId, autorEmail, fechaActual, contenido], (err, result) => {
+    if (err) {
+      console.error("Error al agregar el comentario: " + err.message);
+      res.status(500).json({ error: "Error al agregar el comentario" });
+    } else {
+      console.log("Comentario agregado exitosamente");
+      res.json({ message: "Comentario agregado exitosamente" });
+    }
+  });
+});
+
 app.get("/cursos", (req, res) => {
   // Realiza una consulta SQL para obtener los nombres de los cursos
   const query = "SELECT NOMBRE FROM CURSO";

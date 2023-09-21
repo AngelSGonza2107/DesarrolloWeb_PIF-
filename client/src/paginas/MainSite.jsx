@@ -12,6 +12,10 @@ export default function MainSite(props) {
   const [cursoSeleccionado, setCursoSeleccionado] = useState("");
   const [nombresCursos, setNombresCursos] = useState([]);
   const [publicacionContenido, setPublicacionContenido] = useState("");
+  const [comentarioContenido, setComentarioContenido] = useState("");
+  const [publicacionIdSeleccionada, setPublicacionIdSeleccionada] = useState("");
+
+
   const { user } = location.state || {}; // Obtiene el correo del usuario desde el estado
 
   const [publicaciones, setPublicaciones] = useState([]);
@@ -70,7 +74,32 @@ export default function MainSite(props) {
       });
   };
 
-  
+  const agregarComentario = () => {
+    if (!publicacionIdSeleccionada) {
+      alert("Por favor, seleccione una publicación antes de agregar un comentario.");
+      return;
+    }
+    fetch("http://localhost:8000/agregarComentario", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        publicacionId:  publicacionIdSeleccionada,
+        autorEmail: userEmail,
+        contenido: comentarioContenido,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+        // Limpiar el campo de contenido después de agregar el comentario
+        setComentarioContenido("");
+      })
+      .catch((error) => {
+        console.error("Error al agregar el comentario: " + error.message);
+      });
+  };
   
   return (
     <DefaultLayout>
@@ -138,6 +167,45 @@ export default function MainSite(props) {
             Publicar
           </button>
         </div>
+        <h3>Agregar Comentario:</h3>
+    <div className="card">
+      <div className="card-body">
+        <div>
+          <b>Seleccionar Publicación:</b>
+          <select
+            className="p-1 border rounded"
+            style={{ width: "200px" }}
+            value={publicacionIdSeleccionada}
+            onChange={(e) => setPublicacionIdSeleccionada(e.target.value)}
+          >
+            <option value="">Seleccione una publicación</option>
+            {/* Mapea las publicaciones disponibles para crear opciones en el combobox */}
+            {publicaciones.map((publi) => (
+              <option key={publi.id} value={publi.id}>
+                Publicación #{publi.id}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mt-3">
+          <b>Contenido del Comentario:</b>
+          <textarea
+            className="form-control mt-2"
+            rows="3"
+            value={comentarioContenido}
+            onChange={(e) => setComentarioContenido(e.target.value)}
+          ></textarea>
+        </div>
+        <div className="d-flex justify-content-center">
+          <button
+            className="btn mt-3 px-5 py-2 btn-primary"
+            onClick={agregarComentario}
+          >
+            Agregar Comentario
+          </button>
+        </div>
+      </div>
+    </div>
       </div>
     </div>
   </>
@@ -211,7 +279,8 @@ export default function MainSite(props) {
               </div>
             </div>
           </div>
-
+ 
+  
           <div className="mt-4 d-flex flex-column row-gap-4">
         {publicaciones.length === 0 ? (
           <div class="alert alert-info" role="alert">
@@ -235,6 +304,7 @@ export default function MainSite(props) {
         )}
       </div>
       </div>
+      
       </div>
     </DefaultLayout>
   );
