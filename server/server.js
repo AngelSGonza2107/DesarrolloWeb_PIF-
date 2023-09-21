@@ -19,7 +19,13 @@ app.get("/", (req, res) => {
   // Envía una respuesta simple al acceder a la ruta raíz
   res.json("Conexión exitosa entre el frontend y el backend" );
 });
-
+app.use(
+  session({
+    secret: "sesion",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 app.post("/signup", (req, res) => {
   // Obtén los datos del formulario desde la solicitud
   const { name, reg, email, password } = req.body;
@@ -33,6 +39,22 @@ app.post("/signup", (req, res) => {
     } else {
       console.log("Usuario registrado exitosamente");
       res.json({ message: "Usuario registrado exitosamente" });
+    }
+  });
+});
+
+app.get("/publicaciones", (req, res) => {
+  const query = `
+    SELECT P.id AS PublicacionID, P.contenido AS PublicacionContenido, C.id AS ComentarioID, C.contenido AS ComentarioContenido
+    FROM PUBLICACION AS P
+    LEFT JOIN COMENTARIO AS C ON P.id = C.publicacionId;
+  `;
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error al obtener las publicaciones: " + err.message);
+      res.status(500).json({ error: "Error al obtener las publicaciones" });
+    } else {
+      res.json(result);
     }
   });
 });
@@ -51,6 +73,13 @@ app.post("/login", (req, res) => {
     } else {
       if (result.length > 0) {
         console.log("Inicio de sesión exitoso");
+
+        // Almacenar información en la sesión
+        req.session.user = {
+          email: email,
+          // Otras variables de sesión que desees almacenar
+        };
+
         res.json({ message: "Inicio de sesión exitoso" });
       } else {
         console.log("Credenciales incorrectas");
@@ -153,7 +182,6 @@ app.put("/modificarcomentario/:id", (req, res) => {
     }
   });
 });
-
 
 
 app.listen(8000, ()=>{

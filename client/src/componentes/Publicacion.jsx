@@ -3,10 +3,8 @@ import Comentario from "./Comentario";
 import { Link } from "react-router-dom";
 
 export default function Publicacion(props) {
-  // Esta variable está en varias páginas y componentes
-  // Cambiale el valor de true a false o viceversa y mira los cambios que ocurren en la página
-  // Esta variable simula el estado si hay una sesión iniciada
   const [sesionIniciada, setSesionIniciada] = useState(false);
+  
 
   return (
     <div className="card">
@@ -50,13 +48,20 @@ export default function Publicacion(props) {
           ""
         )}
         <div className="d-flex flex-column row-gap-2">
-          {props.comentarios.length === 0 ? "No hay comentarios" : props.comentarios.map(val => {
-            return <Comentario 
-              autorEmail={val.autorEmail}
-              autorRegistro={val.autorRegistro}
-              contenido={val.contenido}
-            />
-          })}
+          {props.comentarios && props.comentarios.length > 0 ? (
+            props.comentarios.map((val) => {
+              return (
+                <Comentario
+                  key={val.id}
+                  autorEmail={val.autorEmail}
+                  autorRegistro={val.autorRegistro}
+                  contenido={val.contenido}
+                />
+              );
+            })
+          ) : (
+            "No hay comentarios"
+          )}
         </div>
       </div>
     </div>

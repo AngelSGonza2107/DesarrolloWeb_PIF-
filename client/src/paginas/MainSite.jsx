@@ -1,83 +1,45 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
+import { useLocation } from "react-router-dom";
 import Publicacion from "../componentes/Publicacion";
 import DefaultLayout from "../layouts/DefaultLayout";
 
 export default function MainSite(props) {
-  // Esta variable está en varias páginas y componentes
-  // Cambiale el valor de true a false o viceversa y mira los cambios que ocurren en la página
-  // Esta variable simula el estado si hay una sesión iniciada
-  const [sesionIniciada, setSesionIniciada] = useState(false);
-  const publicaciones = [ // estas publicaciones obviamente son falsas, intercambiarlas por las obtenidas de la base de datos
-    {
-      tipo: "curso", //"curso | catedratico"
-      fecha: "99/99/9999",
-      autorEmail: "autor1@email.com",
-      autorRegistro: "202299999",
-      tipoContenido: "Matemática Básica 1", // nombre del curso O nombre del catedrático
-      contenido: "Este es el contenido de la publicación1",
-      comentarios: [
-        {
-          autorEmail: "autorComentario@email.com",
-          autorRegistro: "202288888",
-          contenido: "Este es el comentario 1",
-        },
-        {
-          autorEmail: "autorComentario@email.com",
-          autorRegistro: "202288888",
-          contenido: "Este es el contenido 2",
-        },
-      ],
-    },
-    {
-      tipo: "catedrático", //"curso | catedratico"
-      fecha: "88/88/8888",
-      autorEmail: "autor2@email.com",
-      autorRegistro: "202288888",
-      tipoContenido: "Carlos Pérez", // nombre del curso O nombre del catedrático
-      contenido: "Este es el contenido de la publicación2",
-      comentarios: [
-        {
-          autorEmail: "autorComentario@email.com",
-          autorRegistro: "202288888",
-          contenido: "Este es el comentario ADGALSDJF1",
-        },
-        {
-          autorEmail: "autorComentario@email.com",
-          autorRegistro: "202288888",
-          contenido: "Este es el contenido 2",
-        },
-      ],
-    },
-    {
-      tipo: "curso", //"curso | catedratico"
-      fecha: "77/77/7777",
-      autorEmail: "autor3@email.com",
-      autorRegistro: "202277777",
-      tipoContenido: "Física 2", // nombre del curso O nombre del catedrático
-      contenido:
-        "Ayuda, como se resuelve el problema 22.3. Algo así se vería el contenido de las publicaciones",
-      comentarios: [
-        {
-          autorEmail: "autorComentario@email.com",
-          autorRegistro: "202288888",
-          contenido: "Este es el comentario 1",
-        },
-        {
-          autorEmail: "autorComentario@email.com",
-          autorRegistro: "202288888",
-          contenido: "Este es el contenido 2",
-        },
-      ],
-    },
-  ]; // Cambiarlas por las reales
 
+  const [sesionIniciada, setSesionIniciada] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const location = useLocation();
+  const { user } = location.state || {}; // Obtiene el correo del usuario desde el estado
+
+  const [publicaciones, setPublicaciones] = useState([]);
+  useEffect(() => {
+    if (user) {
+      setSesionIniciada(true);
+      setUserEmail(user);
+    }
+  }, [user]);
+
+  
+  useEffect(() => {
+    // Realizar una solicitud GET al servidor para obtener las publicaciones desde la base de datos
+    fetch("http://localhost:8000/publicaciones") // Reemplaza la URL con la ruta correcta de tu servidor
+      .then((response) => response.json())
+      .then((data) => {
+        setPublicaciones(data); // Actualiza el estado con las publicaciones obtenidas
+      })
+      .catch((error) => {
+        console.error("Error al obtener las publicaciones: " + error.message);
+      });
+  }, []); 
+  
+  
+  
   return (
     <DefaultLayout>
       <div className="row">
         <div className="col-sm-9 col-md-9 col-xl-6 mx-auto">
           <div>
             {sesionIniciada ? (
-              <h3>Bienvenido #email_user_que_inicio_sesion#</h3>
+              <h3>Bienvenido {userEmail}</h3>
             ) : (
               <h3>Menú Inicial</h3>
             )}
@@ -207,27 +169,28 @@ export default function MainSite(props) {
           </div>
 
           <div className="mt-4 d-flex flex-column row-gap-4">
-            {publicaciones.length === 0 ? (
-              <div class="alert alert-info" role="alert">
-                No hay publicaciones
-              </div>
-            ) : (
-              publicaciones.map((publi) => {
-                return (
-                  <Publicacion
-                    tipo={publi.tipo}
-                    fecha={publi.fecha}
-                    autorEmail={publi.autorEmail}
-                    autorRegistro={publi.autorRegistro}
-                    tipoContenido={publi.tipoContenido}
-                    contenido={publi.contenido}
-                    comentarios={publi.comentarios}
-                  />
-                );
-              })
-            )}
+        {publicaciones.length === 0 ? (
+          <div class="alert alert-info" role="alert">
+            No hay publicaciones
           </div>
-        </div>
+        ) : (
+          publicaciones.map((publi) => {
+            return (
+              <Publicacion
+                key={publi.id} // Asegura que cada publicación tenga una clave única
+                tipo={publi.tipo}
+                fecha={publi.fecha}
+                autorEmail={publi.autorEmail}
+                autorRegistro={publi.autorRegistro}
+                tipoContenido={publi.tipoContenido}
+                contenido={publi.contenido}
+                comentarios={publi.comentarios}
+              />
+            );
+          })
+        )}
+      </div>
+      </div>
       </div>
     </DefaultLayout>
   );

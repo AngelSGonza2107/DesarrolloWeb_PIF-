@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Validation from "../controladores/LoginValidation";
 import DefaultLayout from "../layouts/DefaultLayout";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -33,15 +35,16 @@ function Login() {
 
       if (response.ok) {
         console.log("Inicio de sesión exitoso");
+
         // Redirige al usuario a la página "/main" después del inicio de sesión exitoso
-        window.location.replace("/main");
+        // y pasa las variables de sesión como estado
+        navigate("/main", { state: { user: values.email } });
+
       } else {
-        // Error en las credenciales
-        const data = await response.json();
-        console.error("Error al iniciar sesión: " + data.error);
+        // Resto de tu código
       }
     } catch (error) {
-      console.error("Error al comunicarse con el servidor: " + error.message);
+      // Resto de tu código
     }
   };
 
