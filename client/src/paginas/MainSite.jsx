@@ -101,6 +101,24 @@ export default function MainSite(props) {
       });
   };
   
+  const eliminarComentario = (comentarioId) => {
+    // Realiza una solicitud DELETE al servidor para eliminar el comentario
+    fetch(`http://localhost:8000/eliminar-comentario/${comentarioId}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Maneja la respuesta de la base de datos, por ejemplo, mostrando un mensaje de éxito
+        console.log(data.message);
+        // También puedes actualizar la lista de comentarios en tiempo real si lo deseas
+      })
+      .catch((error) => {
+        console.error("Error al eliminar el comentario: " + error.message);
+      });
+  };
+
+
+  
   return (
     <DefaultLayout>
       <div className="row">
@@ -299,9 +317,12 @@ export default function MainSite(props) {
                 contenido={publi.contenido}
                 comentarios={publi.comentarios}
               />
+              
             );
+            
           })
         )}
+      
       </div>
       </div>
       
