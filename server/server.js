@@ -44,17 +44,15 @@ app.post("/signup", (req, res) => {
 });
 
 app.get("/publicaciones", (req, res) => {
-  const query = `
-    SELECT P.id AS PublicacionID, P.contenido AS PublicacionContenido, C.id AS ComentarioID, C.contenido AS ComentarioContenido
-    FROM PUBLICACION AS P
-    LEFT JOIN COMENTARIO AS C ON P.id = C.publicacionId;
-  `;
+  // Realiza una consulta SQL para obtener todas las publicaciones desde la base de datos
+  const query = "SELECT * FROM PUBLICACION";
+
   db.query(query, (err, result) => {
     if (err) {
       console.error("Error al obtener las publicaciones: " + err.message);
       res.status(500).json({ error: "Error al obtener las publicaciones" });
     } else {
-      res.json(result);
+      res.json(result); // Devuelve las publicaciones como una respuesta JSON
     }
   });
 });

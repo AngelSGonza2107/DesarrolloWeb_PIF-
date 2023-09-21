@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 export default function Publicacion(props) {
   const [sesionIniciada, setSesionIniciada] = useState(false);
-  
 
   return (
     <div className="card">

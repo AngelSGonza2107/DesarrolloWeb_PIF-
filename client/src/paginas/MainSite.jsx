@@ -19,6 +19,7 @@ export default function MainSite(props) {
   }, [user]);
 
   
+
   useEffect(() => {
     // Realizar una solicitud GET al servidor para obtener las publicaciones desde la base de datos
     fetch("http://localhost:8000/publicaciones") // Reemplaza la URL con la ruta correcta de tu servidor
@@ -29,8 +30,7 @@ export default function MainSite(props) {
       .catch((error) => {
         console.error("Error al obtener las publicaciones: " + error.message);
       });
-  }, []); 
-  
+  }, []);
   
   
   return (
