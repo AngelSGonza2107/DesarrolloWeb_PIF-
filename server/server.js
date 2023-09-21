@@ -1,89 +1,170 @@
 const express = require ('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
-const db = require('./db');
+const session = require("express-session");
+const cors = require('cors');
+const app = express()
 
-const app = express ();
+const db = mysql.createConnection({
+  host:"localhost",
+  user:"root",
+  password:"asdf",
+  database:"APLICACIONA"
+})
 
-//configuacion de bodyparser para procesar JSON
+
 app.use(bodyParser.json());
-
-
-// Rutas para registro de usuario
-app.post('/registro', (req, res) => {
-    const {nombre, correo, contraseña } = req.body;
-    const sql = 'SELECT * FROM usuarios WHERE correo = ?';
-    db.query(sql, [correo], (err, result) => {
-        if (err) {
-            console.error('Error al realizar la consulta: ' + err.message);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            if (result.length > 0) {
-                res.status(400).json({ error: 'El correo ya está registrado' });
-            } else {
-                // El correo no está registrado, registar en la base de datos
-                const insertSql = 'INSERT INTO usuarios (nombre, correo, contraseña) VALUES (?, ?, ?)';
-                db.query(insertSql, [nombre, correo, contraseña], (insertErr) => {
-                    if (insertErr) {
-                        console.error('Error al registrar usuario: ' + insertErr.message);
-                        res.status(500).json({ error: 'Error interno del servidor' });
-                    } else {
-                        res.json({ mensaje: 'Registro exitoso' });
-                    }
-                });
-            }
-        }
-    });
+app.use(cors());
+app.get("/", (req, res) => {
+  // Envía una respuesta simple al acceder a la ruta raíz
+  res.json("Conexión exitosa entre el frontend y el backend" );
 });
 
-app.post('/inicio-sesion', (req, res) => {
-    const {correo, contraseña} = req.body;
-    //verificacion de las credenciales en la base de datos
-    const sql = 'SELECT * FROM usuarios WHERE correo = ? AND contraseña = ?';
-    db.query(sql, [correo, contraseña], (err, result) => {
-        if (err){
-            console.error('Error al realizar la consuta: ' + err.message);
-            res.status(500).json({ error: 'Error interno del servidor '});
+app.post("/signup", (req, res) => {
+  // Obtén los datos del formulario desde la solicitud
+  const { name, reg, email, password } = req.body;
 
-        } else {
-            if (result.length > 0 ){
-                res.json({mensaje: 'Inicio de sesion Exitoso '});
-
-            } else{
-                res.status(401).json({ error: 'Credenciales Incorrectas '});
-            }
-        }
-    });
-});
-
-app.get('/publicaciones', (req, res) => {
-    db.obtenerPublicaiones((err, result) =>{
-        if (err){
-            res.status(500).json({error: 'Error interno del servidor'});
-        } else {
-            res.json(result);
-        }
-    });
-});
-
-app.post('/publicaciones', (req, res) => {
-    const {usario, curso, mensaje } = req.body;
-    const insertSql = 'INSERT INTO publicaciones (usuario, curso, mensaje) VALUES (?, ?, ?)';
-    db.query(insertSql, [usuario, curso, mensaje], (err) => {
-        if (err) {
-            console.error('Error al crear la publicación: ' + err.message);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            res.json({ mensaje: 'Publicación creada con éxito' });
-        }
-    });
+  // Inserta los datos en la tabla USUARIO
+  const query = "INSERT INTO USUARIO (REGISTROA, NOMBRE, CONTRASENA, CORREO) VALUES (?, ?, ?, ?)";
+  db.query(query, [reg, name, password, email], (err, result) => {
+    if (err) {
+      console.error("Error al registrar el usuario: " + err.message);
+      res.status(500).json({ error: "Error al registrar el usuario" });
+    } else {
+      console.log("Usuario registrado exitosamente");
+      res.json({ message: "Usuario registrado exitosamente" });
+    }
+  });
 });
 
 
-// Puerto en el que se ejecuta el servidor
-const PORT = process.env.PORT || 3000;
+app.post("/login", (req, res) => {
+  // Obtén los datos del formulario desde la solicitud
+  const { email, password } = req.body;
 
-app.listen(PORT, () => {
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
-
+  // Verifica el usuario en la base de datos
+  const query = "SELECT * FROM USUARIO WHERE CORREO = ? AND CONTRASENA = ?";
+  db.query(query, [email, password], (err, result) => {
+    if (err) {
+      console.error("Error al verificar el usuario: " + err.message);
+      res.status(500).json({ error: "Error al verificar el usuario" });
+    } else {
+      if (result.length > 0) {
+        console.log("Inicio de sesión exitoso");
+        res.json({ message: "Inicio de sesión exitoso" });
+      } else {
+        console.log("Credenciales incorrectas");
+        res.status(401).json({ error: "Credenciales incorrectas" });
+      }
+    }
+  });
 });
+
+
+app.post("/updatepassword", (req, res) => {
+  // Obtén los datos del formulario desde la solicitud
+  const { email, reg, newPassword } = req.body;
+
+  // Actualiza la contraseña en la base de datos
+  const query = "UPDATE USUARIO SET CONTRASENA = ? WHERE CORREO = ? AND REGISTROA = ?";
+  db.query(query, [newPassword, email, reg], (err, result) => {
+    if (err) {
+      console.error("Error al actualizar la contraseña: " + err.message);
+      res.status(500).json({ error: "Error al actualizar la contraseña" });
+    } else {
+      if (result.affectedRows > 0) {
+        console.log("Contraseña actualizada exitosamente");
+        res.json({ message: "Contraseña actualizada exitosamente" });
+      } else {
+        console.log("Credenciales incorrectas o usuario no encontrado");
+        res.status(401).json({ error: "Credenciales incorrectas o usuario no encontrado" });
+      }
+    }
+  });
+});
+
+
+app.get("/publicaciones", (req, res) => {
+  const query = "SELECT * FROM PUBLICACION";
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error al obtener las publicaciones: " + err.message);
+      res.status(500).json({ error: "Error al obtener las publicaciones" });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+
+app.post("/crearpublicacion", (req, res) => {
+  const { tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido } = req.body;
+  const query = "INSERT INTO PUBLICACION (tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido) VALUES (?, ?, ?, ?, ?, ?)";
+  db.query(query, [tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido], (err, result) => {
+    if (err) {
+      console.error("Error al crear la publicación: " + err.message);
+      res.status(500).json({ error: "Error al crear la publicación" });
+    } else {
+      console.log("Publicación creada exitosamente");
+      res.json({ message: "Publicación creada exitosamente" });
+    }
+  });
+});
+
+
+
+
+app.delete("/eliminarpublicacion/:id", (req, res) => {
+  const idPublicacion = req.params.id;
+  const query = "DELETE FROM PUBLICACION WHERE id = ?";
+  db.query(query, [idPublicacion], (err, result) => {
+    if (err) {
+      console.error("Error al eliminar la publicación: " + err.message);
+      res.status(500).json({ error: "Error al eliminar la publicación" });
+    } else {
+      if (result.affectedRows > 0) {
+        console.log("Publicación eliminada exitosamente");
+        res.json({ message: "Publicación eliminada exitosamente" });
+      } else {
+        console.log("No se encontró la publicación o no tienes permiso para eliminarla");
+        res.status(401).json({ error: "No se encontró la publicación o no tienes permiso para eliminarla" });
+      }
+    }
+  });
+});
+
+
+app.put("/modificarcomentario/:id", (req, res) => {
+  const idComentario = req.params.id;
+  const { contenido } = req.body;
+  const query = "UPDATE COMENTARIO SET contenido = ? WHERE id = ?";
+  db.query(query, [contenido, idComentario], (err, result) => {
+    if (err) {
+      console.error("Error al modificar el comentario: " + err.message);
+      res.status(500).json({ error: "Error al modificar el comentario" });
+    } else {
+      if (result.affectedRows > 0) {
+        console.log("Comentario modificado exitosamente");
+        res.json({ message: "Comentario modificado exitosamente" });
+      } else {
+        console.log("No se encontró el comentario o no tienes permiso para modificarlo");
+        res.status(401).json({ error: "No se encontró el comentario o no tienes permiso para modificarlo" });
+      }
+    }
+  });
+});
+
+
+
+app.listen(8000, ()=>{
+  console.log("conectado al backend!")
+})
+
+db.connect((err) => {
+  if (err) {
+    console.error("Error al conectar a la base de datos: " + err.message);
+  } else {
+    console.log("Conexión a la base de datos exitosa");
+  }
+});
+

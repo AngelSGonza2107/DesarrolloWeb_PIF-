@@ -9,15 +9,40 @@ function Login() {
     password: "",
   });
   const [errors, setErrors] = useState({});
+
   const handleInput = (event) => {
     setValues((prev) => ({
       ...prev,
-      [event.target.name]: [event.target.value],
+      [event.target.name]: event.target.value, // Corrige esto, elimina los corchetes
     }));
   };
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setErrors(Validation(values));
+
+    // Enviar los datos de inicio de sesión al servidor
+    try {
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        console.log("Inicio de sesión exitoso");
+        // Redirige al usuario a la página "/main" después del inicio de sesión exitoso
+        window.location.replace("/main");
+      } else {
+        // Error en las credenciales
+        const data = await response.json();
+        console.error("Error al iniciar sesión: " + data.error);
+      }
+    } catch (error) {
+      console.error("Error al comunicarse con el servidor: " + error.message);
+    }
   };
 
   return (
