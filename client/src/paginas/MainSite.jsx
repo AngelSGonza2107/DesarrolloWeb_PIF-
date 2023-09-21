@@ -14,6 +14,7 @@ export default function MainSite(props) {
   const [publicacionContenido, setPublicacionContenido] = useState("");
   const [comentarioContenido, setComentarioContenido] = useState("");
   const [publicacionIdSeleccionada, setPublicacionIdSeleccionada] = useState("");
+  const [busqueda, setBusqueda] = useState("");
 
 
   const { user } = location.state || {}; // Obtiene el correo del usuario desde el estado
@@ -117,8 +118,18 @@ export default function MainSite(props) {
       });
   };
 
-
-  
+  const realizarBusqueda = () => {
+    // Realizar una solicitud GET al servidor para buscar publicaciones
+    fetch(`http://localhost:8000/buscar?termino=${busqueda}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Actualizar la lista de publicaciones con los resultados de la búsqueda
+        setPublicaciones(data);
+      })
+      .catch((error) => {
+        console.error("Error al realizar la búsqueda: " + error.message);
+      });
+  };
   return (
     <DefaultLayout>
       <div className="row">
@@ -237,16 +248,19 @@ export default function MainSite(props) {
 
           <h3>Todas las publicaciones</h3>
           <div>
-            <label htmlFor="nombre-curso">
-              Buscar por nombre de curso o catedrático:
-            </label>
-            <input
-              id="nombre-curso"
-              className="form-control mt-2"
-              type="text"
-              style={{ width: "300px" }}
-            />
-          </div>
+  <label htmlFor="nombre-curso">Buscar por nombre de curso o catedrático:</label>
+  <input
+    id="nombre-curso"
+    className="form-control mt-2"
+    type="text"
+    style={{ width: "300px" }}
+    value={busqueda}
+    onChange={(e) => setBusqueda(e.target.value)} // Manejar cambios en la búsqueda
+  />
+  <button className="btn btn-primary mt-2" onClick={realizarBusqueda}>
+    Buscar
+  </button>
+</div>
           <h5 className="my-4">Ordenar por:</h5>
           <div className="row">
             <div className="col">

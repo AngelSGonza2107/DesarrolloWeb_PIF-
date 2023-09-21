@@ -164,6 +164,26 @@ app.get("/publicaciones", (req, res) => {
   });
 });
 
+app.get("/buscar", (req, res) => {
+  const { termino } = req.query; // Obtén el término de búsqueda de la solicitud
+  // Realiza una consulta SQL para buscar publicaciones por nombre de curso o catedrático
+  const query = `
+    SELECT P.*
+    FROM PUBLICACION P
+    LEFT JOIN CURSO C ON P.tipo = C.NOMBRE
+    WHERE C.NOMBRE LIKE ? OR P.tipoContenido LIKE ?;
+  `;
+  db.query(query, [`%${termino}%`, `%${termino}%`], (err, result) => {
+    if (err) {
+      console.error("Error al realizar la búsqueda: " + err.message);
+      res.status(500).json({ error: "Error al realizar la búsqueda" });
+    } else {
+      // Devuelve los resultados de la búsqueda como respuesta JSON
+      res.json(result);
+    }
+  });
+});
+
 
 app.post("/login", (req, res) => {
   // Obtén los datos del formulario desde la solicitud
