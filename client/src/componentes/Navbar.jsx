@@ -31,7 +31,7 @@ export default function Navbar(props) {
           id="navbarNavAltMarkup"
         >
           <div className="navbar-nav">
-            <NavLink to="/" className="nav-link">
+            <NavLink to="/main" className="nav-link">
               Inicio
             </NavLink>
             {sesionIniciada ? (
@@ -39,7 +39,7 @@ export default function Navbar(props) {
                 <NavLink to="/usuario/mi-perfil" className="nav-link">
                   Mi Perfil
                 </NavLink>
-                <NavLink to="/cerrar-sesion" className="nav-link">
+                <NavLink to="/login" className="nav-link">
                   {/* No existe esta ruta: hay que crearla */}
                   Cerrar Sesión
                 </NavLink>

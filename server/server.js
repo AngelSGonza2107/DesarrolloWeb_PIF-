@@ -165,15 +165,25 @@ app.get("/publicaciones", (req, res) => {
 });
 
 app.get("/buscar", (req, res) => {
-  const { termino } = req.query; // Obtén el término de búsqueda de la solicitud
-  // Realiza una consulta SQL para buscar publicaciones por nombre de curso o catedrático
+  const { termino, filtroTipoContenido, ordenAscendente } = req.query;
+
+  // Construir la consulta SQL con filtros y ordenamiento
   const query = `
     SELECT P.*
     FROM PUBLICACION P
     LEFT JOIN CURSO C ON P.tipo = C.NOMBRE
-    WHERE C.NOMBRE LIKE ? OR P.tipoContenido LIKE ?;
+    WHERE (C.NOMBRE LIKE ? OR P.tipoContenido LIKE ?)
+    ${filtroTipoContenido ? "AND P.tipoContenido = ?" : ""}
+    ORDER BY fecha ${ordenAscendente === "true" ? "ASC" : "DESC"};
   `;
-  db.query(query, [`%${termino}%`, `%${termino}%`], (err, result) => {
+
+  // Parámetros de consulta SQL
+  const queryParams = [`%${termino}%`, `%${termino}%`];
+  if (filtroTipoContenido) {
+    queryParams.push(filtroTipoContenido);
+  }
+
+  db.query(query, queryParams, (err, result) => {
     if (err) {
       console.error("Error al realizar la búsqueda: " + err.message);
       res.status(500).json({ error: "Error al realizar la búsqueda" });

@@ -36,9 +36,11 @@ function Signup() {
 
       if (response.ok) {
         console.log("Usuario registrado exitosamente");
+        alert("Registro exitoso");
         // Puedes redirigir al usuario a otra página después del registro si lo deseas
       } else {
         console.error("Error al registrar el usuario");
+        alert("Error, verifique los datos");
       }
     } catch (error) {
       console.error("Error de red: " + error.message);

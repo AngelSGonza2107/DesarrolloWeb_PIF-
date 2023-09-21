@@ -34,14 +34,14 @@ function Login() {
       });
 
       if (response.ok) {
-        console.log("Inicio de sesión exitoso");
+        alert("Inicio de sesión exitoso");
 
         // Redirige al usuario a la página "/main" después del inicio de sesión exitoso
         // y pasa las variables de sesión como estado
         navigate("/main", { state: { user: values.email } });
 
       } else {
-        // Resto de tu código
+        alert("Verifique sus datos");
       }
     } catch (error) {
       // Resto de tu código

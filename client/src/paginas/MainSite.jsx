@@ -15,8 +15,10 @@ export default function MainSite(props) {
   const [comentarioContenido, setComentarioContenido] = useState("");
   const [publicacionIdSeleccionada, setPublicacionIdSeleccionada] = useState("");
   const [busqueda, setBusqueda] = useState("");
-
-
+  const [filtroTipoContenido, setFiltroTipoContenido] = useState("");
+  const [ordenAscendente, setOrdenAscendente] = useState(true);
+  const [orden, setOrden] = useState("ascendente"); // Estado para el orden (ascendente o descendente)
+  const [ordenarPor, setOrdenarPor] = useState("");
   const { user } = location.state || {}; // Obtiene el correo del usuario desde el estado
 
   const [publicaciones, setPublicaciones] = useState([]);
@@ -26,6 +28,12 @@ export default function MainSite(props) {
       setUserEmail(user);
     }
   }, [user]);
+
+
+
+  
+
+
 
   useEffect(() => {
     fetch("http://localhost:8000/cursos") // Reemplaza la URL con la ruta correcta de tu servidor
@@ -117,10 +125,9 @@ export default function MainSite(props) {
         console.error("Error al eliminar el comentario: " + error.message);
       });
   };
-
   const realizarBusqueda = () => {
     // Realizar una solicitud GET al servidor para buscar publicaciones
-    fetch(`http://localhost:8000/buscar?termino=${busqueda}`)
+    fetch(`http://localhost:8000/buscar?termino=${busqueda}&ordenarPor=${ordenarPor}&orden=${orden}`)
       .then((response) => response.json())
       .then((data) => {
         // Actualizar la lista de publicaciones con los resultados de la búsqueda
@@ -130,6 +137,8 @@ export default function MainSite(props) {
         console.error("Error al realizar la búsqueda: " + error.message);
       });
   };
+
+
   return (
     <DefaultLayout>
       <div className="row">
@@ -261,58 +270,47 @@ export default function MainSite(props) {
     Buscar
   </button>
 </div>
-          <h5 className="my-4">Ordenar por:</h5>
-          <div className="row">
-            <div className="col">
-              <input
-                type="radio"
-                id="ninguno"
-                name="ordenar-por-curso-o-catedratico"
-                defaultChecked
-              />
-              <label htmlFor="ninguno">Ninguno</label>
-            </div>
-            <div className="col">
-              <b>Por curso:</b>
-              <div>
-                <input
-                  type="radio"
-                  id="curso-asc"
-                  name="ordenar-por-curso-o-catedratico"
-                />
-                <label htmlFor="curso-asc">Ascendente</label>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  id="curso-des"
-                  name="ordenar-por-curso-o-catedratico"
-                />
-                <label htmlFor="curso-des">Descendente</label>
-              </div>
-            </div>
-            <div className="col">
-              <b>Por catedrático:</b>
-              <div>
-                <input
-                  type="radio"
-                  id="catedratico-asc"
-                  name="ordenar-por-curso-o-catedratico"
-                />
-                <label htmlFor="catedratico-asc">Ascendente</label>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  id="catedratico-des"
-                  name="ordenar-por-curso-o-catedratico"
-                />
-                <label htmlFor="catedratico-des">Descendente</label>
-              </div>
-            </div>
-          </div>
- 
-  
+<h5 className="my-4">Ordenar por:</h5>
+<div className="row">
+  <div className="col">
+    <input
+      type="radio"
+      id="ninguno"
+      name="ordenar-por-curso-o-catedratico"
+      defaultChecked
+      onClick={() => setOrdenarPor("")}
+    />
+    <label htmlFor="ninguno">Ninguno</label>
+  </div>
+  <div className="col">
+    <b>Por curso:</b>
+    <div>
+      <input
+        type="radio"
+        id="curso-asc"
+        name="ordenar-por-curso-o-catedratico"
+        onClick={() => {
+          setOrdenarPor("tipo");
+          setOrden("ascendente");
+        }}
+      />
+      <label htmlFor="curso-asc">Ascendente</label>
+    </div>
+    <div>
+      <input
+        type="radio"
+        id="curso-des"
+        name="ordenar-por-curso-o-catedratico"
+        onClick={() => {
+          setOrdenarPor("tipo");
+          setOrden("descendente");
+        }}
+      />
+      <label htmlFor="curso-des">Descendente</label>
+    </div>
+  </div>
+  {/* Añade opciones de clasificación por catedrático si es necesario */}
+</div>
           <div className="mt-4 d-flex flex-column row-gap-4">
         {publicaciones.length === 0 ? (
           <div class="alert alert-info" role="alert">
