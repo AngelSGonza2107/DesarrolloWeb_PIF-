@@ -7,7 +7,11 @@ export default function MainSite(props) {
 
   const [sesionIniciada, setSesionIniciada] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [tipoPublicacion, setTipoPublicacion] = useState("");
   const location = useLocation();
+  const [cursoSeleccionado, setCursoSeleccionado] = useState("");
+  const [nombresCursos, setNombresCursos] = useState([]);
+  const [publicacionContenido, setPublicacionContenido] = useState("");
   const { user } = location.state || {}; // Obtiene el correo del usuario desde el estado
 
   const [publicaciones, setPublicaciones] = useState([]);
@@ -18,7 +22,16 @@ export default function MainSite(props) {
     }
   }, [user]);
 
-  
+  useEffect(() => {
+    fetch("http://localhost:8000/cursos") // Reemplaza la URL con la ruta correcta de tu servidor
+      .then((response) => response.json())
+      .then((data) => {
+        setNombresCursos(data); // Actualiza el estado con los nombres de los cursos obtenidos
+      })
+      .catch((error) => {
+        console.error("Error al obtener los nombres de los cursos: " + error.message);
+      });
+  }, []);
 
   useEffect(() => {
     // Realizar una solicitud GET al servidor para obtener las publicaciones desde la base de datos
@@ -31,6 +44,32 @@ export default function MainSite(props) {
         console.error("Error al obtener las publicaciones: " + error.message);
       });
   }, []);
+  
+  const agregarPublicacion = () => {
+    // Realiza una solicitud POST al servidor para agregar la publicación
+    fetch("http://localhost:8000/agregarPublicacion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tipo: tipoPublicacion, // Usa el valor seleccionado en el combobox como el tipo de publicación
+        contenido: publicacionContenido,
+        usuarioEmail: userEmail,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+        // Limpiar los campos después de agregar la publicación
+        setTipoPublicacion("");
+        setPublicacionContenido("");
+      })
+      .catch((error) => {
+        console.error("Error al agregar la publicación: " + error.message);
+      });
+  };
+
   
   
   return (
@@ -59,45 +98,50 @@ export default function MainSite(props) {
           <hr className="my-4" />
 
           {sesionIniciada ? (
-            <>
-              <h3>Crear mi publicación:</h3>
-              <div className="card">
-                <div className="card-body">
-                  <div>
-                    <div>
-                      <b>Tipo de publicación: </b>
-                      <select
-                        className="p-1 border rounded"
-                        style={{ width: "150px" }}
-                      >
-                        <option value="">Curso</option>
-                        <option value="">Catedrático</option>
-                      </select>
-                    </div>
-                    <div className="mt-3">
-                      <b>Curso: </b>
-                      <select
-                        className="p-1 border rounded"
-                        style={{ width: "200px" }}
-                      >
-                        <option value="">#curso1#</option>
-                        <option value="">#curso2#</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <b>Contenido:</b>
-                    <textarea className="form-control mt-2" rows="5"></textarea>
-                  </div>
-                  <div className="d-flex justify-content-center">
-                    <button className="btn mt-3 px-5 py-2 btn-primary">
-                      Publicar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
+  <>
+    <h3>Crear mi publicación:</h3>
+    <div className="card">
+      <div className="card-body">
+        <div>
+          
+          <div className="mt-3">
+            <b>Curso: </b>
+            <select
+              className="p-1 border rounded"
+              style={{ width: "200px" }}
+              value={tipoPublicacion}
+              onChange={(e) => setTipoPublicacion(e.target.value)}
+            >
+              <option value="">Seleccione un curso</option>
+              {nombresCursos.map((curso) => (
+                <option key={curso} value={curso}>
+                  {curso}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="mt-3">
+          <b>Contenido:</b>
+          <textarea
+            className="form-control mt-2"
+            rows="5"
+            value={publicacionContenido}
+            onChange={(e) => setPublicacionContenido(e.target.value)}
+          ></textarea>
+        </div>
+        <div className="d-flex justify-content-center">
+          <button
+            className="btn mt-3 px-5 py-2 btn-primary"
+            onClick={agregarPublicacion}
+          >
+            Publicar
+          </button>
+        </div>
+      </div>
+    </div>
+  </>
+) : (
             <div class="alert alert-secondary" role="alert">
               <b>!</b> Para crear una publicación, debes de iniciar sesión
             </div>

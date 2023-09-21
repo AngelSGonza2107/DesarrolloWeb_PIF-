@@ -1,5 +1,4 @@
-import { useState } from "react";
-import Comentario from "./Comentario";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Publicacion(props) {
@@ -48,14 +47,12 @@ export default function Publicacion(props) {
         )}
         <div className="d-flex flex-column row-gap-2">
           {props.comentarios && props.comentarios.length > 0 ? (
-            props.comentarios.map((val) => {
+            props.comentarios.map((comentario, index) => {
               return (
-                <Comentario
-                  key={val.id}
-                  autorEmail={val.autorEmail}
-                  autorRegistro={val.autorRegistro}
-                  contenido={val.contenido}
-                />
+                <div key={index} className="border p-2">
+                  <b>Comentario por {comentario.autorEmail}:</b>
+                  <p>{comentario.contenido}</p>
+                </div>
               );
             })
           ) : (

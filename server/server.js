@@ -43,16 +43,103 @@ app.post("/signup", (req, res) => {
   });
 });
 
+app.post("/crearPublicacion", (req, res) => {
+  // Obtén los datos del formulario para crear una nueva publicación desde la solicitud
+  const { tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido } = req.body;
+
+  // Inserta los datos en la tabla PUBLICACION
+  const query = "INSERT INTO PUBLICACION (tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido) VALUES (?, ?, ?, ?, ?, ?)";
+  db.query(query, [tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido], (err, result) => {
+    if (err) {
+      console.error("Error al crear la publicación: " + err.message);
+      res.status(500).json({ error: "Error al crear la publicación" });
+    } else {
+      console.log("Publicación creada exitosamente");
+      res.json({ message: "Publicación creada exitosamente" });
+    }
+  });
+});
+
+app.get("/cursos", (req, res) => {
+  // Realiza una consulta SQL para obtener los nombres de los cursos
+  const query = "SELECT NOMBRE FROM CURSO";
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error al obtener los nombres de los cursos: " + err.message);
+      res.status(500).json({ error: "Error al obtener los nombres de los cursos" });
+    } else {
+      // Devuelve los nombres de los cursos como respuesta JSON
+      const nombresCursos = result.map((row) => row.NOMBRE);
+      res.json(nombresCursos);
+    }
+  });
+});
+
+app.post("/agregarPublicacion", (req, res) => {
+  // Obtén los datos del formulario desde la solicitud
+  const { tipo, contenido, usuarioEmail } = req.body;
+
+  // Inserta los datos en la tabla PUBLICACION
+  const query = "INSERT INTO PUBLICACION (tipo, fecha, autorEmail, tipoContenido, contenido) VALUES (?, NOW(), ?, 'Texto', ?)";
+  db.query(query, [tipo, usuarioEmail, contenido], (err, result) => {
+    if (err) {
+      console.error("Error al agregar la publicación: " + err.message);
+      res.status(500).json({ error: "Error al agregar la publicación" });
+    } else {
+      console.log("Publicación agregada exitosamente");
+      res.json({ message: "Publicación agregada exitosamente" });
+    }
+  });
+});
+
 app.get("/publicaciones", (req, res) => {
-  // Realiza una consulta SQL para obtener todas las publicaciones desde la base de datos
-  const query = "SELECT * FROM PUBLICACION";
+  // Realiza una consulta SQL para obtener todas las publicaciones y sus comentarios
+  const query = `
+    SELECT P.*, C.id AS comentarioId, C.autorEmail AS comentarioAutorEmail, C.contenido AS comentarioContenido
+    FROM PUBLICACION P
+    LEFT JOIN COMENTARIO C ON P.id = C.publicacionId
+  `;
 
   db.query(query, (err, result) => {
     if (err) {
       console.error("Error al obtener las publicaciones: " + err.message);
       res.status(500).json({ error: "Error al obtener las publicaciones" });
     } else {
-      res.json(result); // Devuelve las publicaciones como una respuesta JSON
+      // Procesar los resultados para agrupar comentarios por publicación
+      const publicacionesConComentarios = [];
+
+      // Utilizar un mapa para agrupar comentarios por ID de publicación
+      const publicacionesMap = new Map();
+      result.forEach((row) => {
+        const { id, tipo, fecha, autorEmail, contenido, comentarioId, comentarioAutorEmail, comentarioContenido } = row;
+        if (!publicacionesMap.has(id)) {
+          // Si la publicación no está en el mapa, crear una entrada para ella
+          publicacionesMap.set(id, {
+            id,
+            tipo,
+            fecha,
+            autorEmail,
+            contenido,
+            comentarios: [],
+          });
+        }
+
+        // Agregar el comentario a la publicación correspondiente
+        if (comentarioId) {
+          publicacionesMap.get(id).comentarios.push({
+            id: comentarioId,
+            autorEmail: comentarioAutorEmail,
+            contenido: comentarioContenido,
+          });
+        }
+      });
+
+      // Convertir el mapa de publicaciones de nuevo en un arreglo
+      publicacionesMap.forEach((value) => {
+        publicacionesConComentarios.push(value);
+      });
+
+      res.json(publicacionesConComentarios); // Devuelve las publicaciones con comentarios como respuesta JSON
     }
   });
 });
@@ -124,62 +211,8 @@ app.get("/publicaciones", (req, res) => {
 });
 
 
-app.post("/crearpublicacion", (req, res) => {
-  const { tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido } = req.body;
-  const query = "INSERT INTO PUBLICACION (tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido) VALUES (?, ?, ?, ?, ?, ?)";
-  db.query(query, [tipo, fecha, autorEmail, autorRegistro, tipoContenido, contenido], (err, result) => {
-    if (err) {
-      console.error("Error al crear la publicación: " + err.message);
-      res.status(500).json({ error: "Error al crear la publicación" });
-    } else {
-      console.log("Publicación creada exitosamente");
-      res.json({ message: "Publicación creada exitosamente" });
-    }
-  });
-});
 
 
-
-
-app.delete("/eliminarpublicacion/:id", (req, res) => {
-  const idPublicacion = req.params.id;
-  const query = "DELETE FROM PUBLICACION WHERE id = ?";
-  db.query(query, [idPublicacion], (err, result) => {
-    if (err) {
-      console.error("Error al eliminar la publicación: " + err.message);
-      res.status(500).json({ error: "Error al eliminar la publicación" });
-    } else {
-      if (result.affectedRows > 0) {
-        console.log("Publicación eliminada exitosamente");
-        res.json({ message: "Publicación eliminada exitosamente" });
-      } else {
-        console.log("No se encontró la publicación o no tienes permiso para eliminarla");
-        res.status(401).json({ error: "No se encontró la publicación o no tienes permiso para eliminarla" });
-      }
-    }
-  });
-});
-
-
-app.put("/modificarcomentario/:id", (req, res) => {
-  const idComentario = req.params.id;
-  const { contenido } = req.body;
-  const query = "UPDATE COMENTARIO SET contenido = ? WHERE id = ?";
-  db.query(query, [contenido, idComentario], (err, result) => {
-    if (err) {
-      console.error("Error al modificar el comentario: " + err.message);
-      res.status(500).json({ error: "Error al modificar el comentario" });
-    } else {
-      if (result.affectedRows > 0) {
-        console.log("Comentario modificado exitosamente");
-        res.json({ message: "Comentario modificado exitosamente" });
-      } else {
-        console.log("No se encontró el comentario o no tienes permiso para modificarlo");
-        res.status(401).json({ error: "No se encontró el comentario o no tienes permiso para modificarlo" });
-      }
-    }
-  });
-});
 
 
 app.listen(8000, ()=>{
